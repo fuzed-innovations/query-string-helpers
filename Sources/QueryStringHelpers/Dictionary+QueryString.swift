@@ -2,8 +2,6 @@
 //  Dictionary+QueryString.swift
 //  QueryStringHelpers
 //
-//  Created by chikara ono on 08/10/2017.
-//
 
 import Foundation
 
