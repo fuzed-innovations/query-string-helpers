@@ -9,7 +9,7 @@ extension String {
     
     public var queryParameters: [String: String] {
         
-        guard let startOfQS = self.index(of: "?") else {
+        guard let startOfQS = self.range(of: "?")?.upperBound else {
             return [:]
         }
         
@@ -19,10 +19,10 @@ extension String {
         var answer: [String: String] = [:]
         queryComponents.forEach {
             
-            if let indexOfFirstEqual = $0.index(of: "=") {
+            if let rangeOfFirstEqual = $0.range(of: "=") {
                 
-                let key = $0.substring(to: indexOfFirstEqual).removingPercentEncoding ?? ""
-                let value = $0.substring(from: indexOfFirstEqual).removingPercentEncoding ?? ""
+                let key = $0.substring(to: rangeOfFirstEqual.lowerBound).removingPercentEncoding ?? ""
+                let value = $0.substring(from: rangeOfFirstEqual.upperBound).removingPercentEncoding ?? ""
                 
                 answer[key] = value
                 
