@@ -9,7 +9,9 @@ extension Dictionary where Key == String, Value == String {
     
     public var queryString: String {
         
-        return self.keys.reduce("") { existingQs, key -> String in
+        let urlQueryValueAllowed = (CharacterSet(charactersIn: "!*'();:@&=+$,/?%#[] ").inverted)
+        
+        return "?" + self.keys.reduce("") { existingQs, key -> String in
             
             var reducing = existingQs
             
@@ -20,7 +22,7 @@ extension Dictionary where Key == String, Value == String {
             reducing += key.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "INVALIDKEY"
             
             if let val = self[key] {
-                reducing += "=" + (val.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")
+                reducing += "=" + (val.addingPercentEncoding(withAllowedCharacters: urlQueryValueAllowed) ?? "")
             }
             
             return reducing
