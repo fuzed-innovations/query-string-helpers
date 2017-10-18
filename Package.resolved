@@ -1,51 +1,7 @@
 {
   "object": {
     "pins": [
-      {
-        "package": "HeliumLogger",
-        "repositoryURL": "https://github.com/IBM-Swift/HeliumLogger.git",
-        "state": {
-          "branch": null,
-          "revision": "2afeb4c02f5a48a7fbd081fe8607b91eeebd7ecb",
-          "version": "1.7.1"
-        }
-      },
-      {
-        "package": "LoggerAPI",
-        "repositoryURL": "https://github.com/IBM-Swift/LoggerAPI.git",
-        "state": {
-          "branch": null,
-          "revision": "6b62fe66da9b8794d6581e5c341710eea3173cd4",
-          "version": "1.7.1"
-        }
-      },
-      {
-        "package": "PromiseKit",
-        "repositoryURL": "https://github.com/mxcl/PromiseKit.git",
-        "state": {
-          "branch": null,
-          "revision": "0c4905628dad94ad7d7cc26a718ae0773a2b3d2d",
-          "version": "4.4.1"
-        }
-      },
-      {
-        "package": "SwiftCloudant",
-        "repositoryURL": "https://github.com/fuzed-innovations/swift-cloudant.git",
-        "state": {
-          "branch": null,
-          "revision": "c4fd9a399757356190322f3c7efa89ce63daaeff",
-          "version": "0.7.3"
-        }
-      },
-      {
-        "package": "SwiftyJSON",
-        "repositoryURL": "https://github.com/IBM-Swift/SwiftyJSON.git",
-        "state": {
-          "branch": null,
-          "revision": "1190845cf7d25a5c8ea7653fe03dcdd39a082056",
-          "version": "17.0.0"
-        }
-      }
+
     ]
   },
   "version": 1
