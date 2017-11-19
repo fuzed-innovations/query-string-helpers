@@ -9,6 +9,8 @@ extension Dictionary where Key == String, Value == String {
     
     public var queryString: String {
         
+        guard self.keys.count > 0 else { return "" }
+        
         let urlQueryValueAllowed = (CharacterSet(charactersIn: "!*'();:@&=+$,/?%#[] ").inverted)
         
         return "?" + self.keys.reduce("") { existingQs, key -> String in
