@@ -2,8 +2,6 @@
 //  String+Encoding.swift
 //  QueryStringHelpers
 //
-//  Created by Ryan Peggs on 19/11/2017.
-//
 
 import Foundation
 

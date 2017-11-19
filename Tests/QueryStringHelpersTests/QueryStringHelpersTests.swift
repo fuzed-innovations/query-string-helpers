@@ -1,3 +1,8 @@
+//
+//  QueryStringHelpersTests.swift
+//  QueryStringHelpersTests
+//
+
 import XCTest
 @testable import QueryStringHelpers
 
