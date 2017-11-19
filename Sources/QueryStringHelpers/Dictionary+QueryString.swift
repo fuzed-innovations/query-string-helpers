@@ -7,11 +7,9 @@ import Foundation
 
 extension Dictionary where Key == String, Value == String {
     
-    public var queryString: String {
+    public func queryString(spacesMode: URLQuerySpaceEncodingMode = .plus) -> String {
         
         guard self.keys.count > 0 else { return "" }
-        
-        let urlQueryValueAllowed = (CharacterSet(charactersIn: "!*'();:@&=+$,/?%#[] ").inverted)
         
         return "?" + self.keys.sorted().reduce("") { existingQs, key -> String in
             
@@ -21,10 +19,10 @@ extension Dictionary where Key == String, Value == String {
                 reducing += "&"
             }
             
-            reducing += key.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "INVALIDKEY"
+            reducing += key.encodedForURLQuery(spacesMode: spacesMode)
             
             if let val = self[key] {
-                reducing += "=" + (val.addingPercentEncoding(withAllowedCharacters: urlQueryValueAllowed) ?? "")
+                reducing += "=" + val.encodedForURLQuery(spacesMode: spacesMode)
             }
             
             return reducing

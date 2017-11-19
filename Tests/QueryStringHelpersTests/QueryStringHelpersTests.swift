@@ -3,38 +3,81 @@ import XCTest
 
 class QueryStringHelpersTests: XCTestCase {
     
-    let restrictedQueryKeyCharacters = (unencoded: ";/?:@&=+,$ ",
-                                        encoded: "%3B%2F%3F%3A%40%26%3D%2B%2C%24%20")
+    let restrictedQueryCharacters = (unencoded: ":/?#[]@\"!$&'()*+,;= ",
+                                     encodedSpacePlus: "%3A%2F%3F%23%5B%5D%40%22%21%24%26%27%28%29%2A%2B%2C%3B%3D+",
+                                     encodedSpacePercent: "%3A%2F%3F%23%5B%5D%40%22%21%24%26%27%28%29%2A%2B%2C%3B%3D%20")
     
-    let restrictedQueryValueCharacters = (unencoded: ";/?:@&=+,$ ",
-                                          encoded: "%3B%2F%3F%3A%40%26%3D%2B%2C%24%20")
+    let allowedQueryCharacterSample = "aAzZ~_-."
+    
+    func testStringEncoding() {
+        
+        // Test Allowed Characters
+        XCTAssertEqual(allowedQueryCharacterSample.encodedForURLQuery(spacesMode: .plus),
+                       allowedQueryCharacterSample)
+        XCTAssertEqual(allowedQueryCharacterSample.encodedForURLQuery(spacesMode: .percent),
+                       allowedQueryCharacterSample)
+        
+        // Test Restricted Characters
+        XCTAssertEqual(restrictedQueryCharacters.unencoded.encodedForURLQuery(spacesMode: .plus),
+                       restrictedQueryCharacters.encodedSpacePlus)
+        XCTAssertEqual(restrictedQueryCharacters.unencoded.encodedForURLQuery(spacesMode: .percent),
+                       restrictedQueryCharacters.encodedSpacePercent)
+        
+        // Test Combination Of Characters
+        XCTAssertEqual("\(allowedQueryCharacterSample)\(restrictedQueryCharacters.unencoded)".encodedForURLQuery(spacesMode: .plus),
+                       "\(allowedQueryCharacterSample)\(restrictedQueryCharacters.encodedSpacePlus)")
+        XCTAssertEqual("\(allowedQueryCharacterSample)\(restrictedQueryCharacters.unencoded)".encodedForURLQuery(spacesMode: .percent),
+                       "\(allowedQueryCharacterSample)\(restrictedQueryCharacters.encodedSpacePercent)")
+    }
+    
+    func testStringDecoding() {
+        
+        // Test Allowed Characters
+        XCTAssertEqual(allowedQueryCharacterSample.decodedFromURLQuery(),
+                       allowedQueryCharacterSample)
+        
+        // Test Restricted Characters
+        XCTAssertEqual(restrictedQueryCharacters.encodedSpacePlus.decodedFromURLQuery(),
+                       restrictedQueryCharacters.unencoded)
+        XCTAssertEqual(restrictedQueryCharacters.encodedSpacePercent.decodedFromURLQuery(),
+                       restrictedQueryCharacters.unencoded)
+        
+        // Test Combination Of Characters
+        XCTAssertEqual((restrictedQueryCharacters.encodedSpacePlus + restrictedQueryCharacters.encodedSpacePercent + allowedQueryCharacterSample).decodedFromURLQuery(),
+                       restrictedQueryCharacters.unencoded         + restrictedQueryCharacters.unencoded           + allowedQueryCharacterSample)
+        
+    }
     
     func testQueryStringGeneration() {
         
         // Test empty dictionary
-        XCTAssertEqual([:].queryString, "")
+        XCTAssertEqual([:].queryString(), "")
         
         // Test single query parameter no value
-        XCTAssertEqual(["a": ""].queryString, "?a=") // is this expected?
+        XCTAssertEqual([allowedQueryCharacterSample: ""].queryString(), "?\(allowedQueryCharacterSample)=") // is this expected?
         
         // Test single query parameter
-        XCTAssertEqual(["a": "test"].queryString, "?a=test")
+        XCTAssertEqual([allowedQueryCharacterSample: "test"].queryString(), "?\(allowedQueryCharacterSample)=test")
         
         // Test two query parameters in alphabetical order
-        XCTAssertEqual(["a": "test", "b": "testagain"].queryString,
+        XCTAssertEqual(["a": "test", "b": "testagain"].queryString(),
                        "?a=test&b=testagain")
         
         // Test two query parameters are ordered into alphabetical order
-        XCTAssertEqual(["b": "testagain", "a": "test",].queryString,
+        XCTAssertEqual(["b": "testagain", "a": "test",].queryString(),
                        "?a=test&b=testagain")
         
         // Test URL Encoding of keys
-        XCTAssertEqual(["\(restrictedQueryKeyCharacters.unencoded)": "test"].queryString,
-                       "?\(restrictedQueryKeyCharacters.encoded)=test")
+        XCTAssertEqual(["\(restrictedQueryCharacters.unencoded)": "test"].queryString(spacesMode: .plus),
+                       "?\(restrictedQueryCharacters.encodedSpacePlus)=test")
+        XCTAssertEqual(["\(restrictedQueryCharacters.unencoded)": "test"].queryString(spacesMode: .percent),
+                       "?\(restrictedQueryCharacters.encodedSpacePercent)=test")
         
         // Test URL Encoding of values
-        XCTAssertEqual(["test": "\(restrictedQueryValueCharacters.unencoded)"].queryString,
-                       "?test=\(restrictedQueryValueCharacters.encoded)")
+        XCTAssertEqual(["test": "\(restrictedQueryCharacters.unencoded)"].queryString(spacesMode: .plus),
+                       "?test=\(restrictedQueryCharacters.encodedSpacePlus)")
+        XCTAssertEqual(["test": "\(restrictedQueryCharacters.unencoded)"].queryString(spacesMode: .percent),
+                       "?test=\(restrictedQueryCharacters.encodedSpacePercent)")
     }
     
     func testQueryStringResolution() {
@@ -60,12 +103,18 @@ class QueryStringHelpersTests: XCTestCase {
                            ["a": "test", "b": "", "c": "test"])
             
             // Test URL Encoded key
-            XCTAssertEqual("\(base)?\(restrictedQueryKeyCharacters.encoded)=test".queryParameters,
-                           [restrictedQueryKeyCharacters.unencoded: "test"])
+            XCTAssertEqual("\(base)?\(restrictedQueryCharacters.encodedSpacePlus)=test".queryParameters,
+                           [restrictedQueryCharacters.unencoded: "test"])
+            
+            XCTAssertEqual("\(base)?\(restrictedQueryCharacters.encodedSpacePercent)=test".queryParameters,
+                           [restrictedQueryCharacters.unencoded: "test"])
             
             // Test URL Encoded value
-            XCTAssertEqual("\(base)?test=\(restrictedQueryValueCharacters.encoded)".queryParameters,
-                           ["test": restrictedQueryValueCharacters.unencoded])
+            XCTAssertEqual("\(base)?test=\(restrictedQueryCharacters.encodedSpacePlus)".queryParameters,
+                           ["test": restrictedQueryCharacters.unencoded])
+            
+            XCTAssertEqual("\(base)?test=\(restrictedQueryCharacters.encodedSpacePercent)".queryParameters,
+                           ["test": restrictedQueryCharacters.unencoded])
             
             // Test duplicate keys - handling: LAST SET
             XCTAssertEqual("\(base)?a=test&a=testtwo".queryParameters,
@@ -78,25 +127,6 @@ class QueryStringHelpersTests: XCTestCase {
             // Test QS with no starting character (should not resolve)
             XCTAssertEqual("\(base)a=test".queryParameters,
                            [:])
-            
-            // Test QS spaces in different formats
-            XCTAssertEqual("\(base)?a=string+with+spaces".queryParameters,
-                           ["a": "string with spaces"])
-            
-            XCTAssertEqual("\(base)?a=string%20with%20spaces".queryParameters,
-                           ["a": "string with spaces"])
-            
-            XCTAssertEqual("\(base)?a=string%20with+spaces".queryParameters,
-                           ["a": "string with spaces"])
-            
-            XCTAssertEqual("\(base)?string+with+spaces=test".queryParameters,
-                           ["string with spaces": "test"])
-            
-            XCTAssertEqual("\(base)?string%20with%20spaces=test".queryParameters,
-                           ["string with spaces": "test"])
-            
-            XCTAssertEqual("\(base)?string%20with+spaces=test".queryParameters,
-                           ["string with spaces": "test"])
         }
         
         
@@ -139,12 +169,12 @@ class QueryStringHelpersTests: XCTestCase {
                            "\(base)?a=overwrite")
             
             // Test adding with existing URL encoded Params
-            XCTAssertEqual("\(base)?\(restrictedQueryKeyCharacters.encoded)=\(restrictedQueryValueCharacters.encoded)".adding(queryParameters: ["a": "overwrite"]),
-                           "\(base)?\(restrictedQueryKeyCharacters.encoded)=\(restrictedQueryValueCharacters.encoded)&a=overwrite")
+            XCTAssertEqual("\(base)?\(restrictedQueryCharacters.encodedSpacePlus)=\(restrictedQueryCharacters.encodedSpacePlus)".adding(queryParameters: ["a": "overwrite"]),
+                           "\(base)?\(restrictedQueryCharacters.encodedSpacePlus)=\(restrictedQueryCharacters.encodedSpacePlus)&a=overwrite")
             
             // Test adding URL encoded Params
-            XCTAssertEqual("\(base)".adding(queryParameters: [restrictedQueryKeyCharacters.unencoded: restrictedQueryValueCharacters.unencoded]),
-                                            "\(base)?\(restrictedQueryKeyCharacters.encoded)=\(restrictedQueryValueCharacters.encoded)")
+            XCTAssertEqual("\(base)".adding(queryParameters: [restrictedQueryCharacters.unencoded: restrictedQueryCharacters.unencoded]),
+                                            "\(base)?\(restrictedQueryCharacters.encodedSpacePlus)=\(restrictedQueryCharacters.encodedSpacePlus)")
             
             
             // Test parameter overwriting
@@ -160,6 +190,8 @@ class QueryStringHelpersTests: XCTestCase {
 
 
     static var allTests = [
+        ("testStringEncoding", testStringEncoding),
+        ("testStringDecoding", testStringDecoding),
         ("testQueryStringGeneration", testQueryStringGeneration),
         ("testQueryStringResolution", testQueryStringResolution),
         ("testQueryAddition", testQueryAddition)

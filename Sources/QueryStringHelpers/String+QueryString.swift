@@ -4,7 +4,7 @@
 //
 
 import Foundation
-
+    
 extension String {
     
     public var queryParameters: [String: String] {
@@ -21,13 +21,13 @@ extension String {
             
             if let rangeOfFirstEqual = $0.range(of: "=") {
                 
-                let key = $0.substring(to: rangeOfFirstEqual.lowerBound).removingPercentEncoding ?? ""
-                let value = $0.substring(from: rangeOfFirstEqual.upperBound).removingPercentEncoding ?? ""
+                let key = $0.substring(to: rangeOfFirstEqual.lowerBound).decodedFromURLQuery()
+                let value = $0.substring(from: rangeOfFirstEqual.upperBound).decodedFromURLQuery()
                 
                 answer[key] = value
                 
             } else {
-                let key = $0.removingPercentEncoding ?? ""
+                let key = $0.decodedFromURLQuery()
                 answer[key] = ""
             }
         }
@@ -35,7 +35,7 @@ extension String {
         return answer
     }
     
-    public func adding(queryParameters: [String: String]) -> String {
+    public func adding(queryParameters: [String: String], spacesMode: URLQuerySpaceEncodingMode = .plus) -> String {
         
         // Mutable copy
         var result = self;
@@ -52,7 +52,7 @@ extension String {
         }
         
         // Add new query string from merge
-        result += merged.queryString
+        result += merged.queryString(spacesMode: spacesMode)
         
         return result
     }
