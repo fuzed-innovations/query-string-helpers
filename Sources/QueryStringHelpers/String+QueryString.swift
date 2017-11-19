@@ -49,10 +49,8 @@ extension String {
             result = self.substring(to: index)
         }
         
-        let qs = merged.queryString
-        if !qs.characters.isEmpty {
-            result += "?" + qs
-        }
+        // Add new query string from merge
+        result += merged.queryString
         
         return result
     }
