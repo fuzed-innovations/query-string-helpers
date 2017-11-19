@@ -128,7 +128,7 @@ class QueryStringHelpersTests: XCTestCase {
             
             // Test alphabetical parameter addition with an existing non-alphabetical qs
             XCTAssertEqual("\(base)?b=test&a=testorder".adding(queryParameters: ["d": "test", "c": "testtwo"]),
-                           "\(base)?a=testorder&b=testa=test&c=testtwo&d=test")
+                           "\(base)?a=testorder&b=test&c=testtwo&d=test")
             
             // Test addition of empty QS - existing QS
             XCTAssertEqual("\(base)?a=test".adding(queryParameters: [:]),
