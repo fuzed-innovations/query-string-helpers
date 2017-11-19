@@ -37,14 +37,16 @@ extension String {
     
     public func adding(queryParameters: [String: String]) -> String {
         
-        var result = self; // mutable copy
+        // Mutable copy
+        var result = self;
         
+        // Merge current and new query parameter dictionaries
         var merged = self.queryParameters
-        
         queryParameters.keys.forEach {
             merged[$0] = queryParameters[$0]
         }
         
+        // Remove old query string if exists
         if let index = self.index(of: "?") {
             result = self.substring(to: index)
         }
