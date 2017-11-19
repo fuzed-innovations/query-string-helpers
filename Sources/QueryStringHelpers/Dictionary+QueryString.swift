@@ -13,7 +13,7 @@ extension Dictionary where Key == String, Value == String {
         
         let urlQueryValueAllowed = (CharacterSet(charactersIn: "!*'();:@&=+$,/?%#[] ").inverted)
         
-        return "?" + self.keys.reduce("") { existingQs, key -> String in
+        return "?" + self.keys.sorted().reduce("") { existingQs, key -> String in
             
             var reducing = existingQs
             
