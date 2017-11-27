@@ -17,6 +17,7 @@ extension String {
         let urlQueryAllowed = [
             CharacterSet(charactersIn: "a"..."z"),
             CharacterSet(charactersIn: "A"..."Z"),
+            CharacterSet(charactersIn: "0"..."9"),
             CharacterSet(charactersIn: ".-~_")
             ].reduce(CharacterSet()) { combined, next -> CharacterSet in
                 return combined.union(next)

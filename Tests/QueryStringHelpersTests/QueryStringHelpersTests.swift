@@ -12,7 +12,7 @@ class QueryStringHelpersTests: XCTestCase {
                                      encodedSpacePlus: "%3A%2F%3F%23%5B%5D%40%22%21%24%26%27%28%29%2A%2B%2C%3B%3D+",
                                      encodedSpacePercent: "%3A%2F%3F%23%5B%5D%40%22%21%24%26%27%28%29%2A%2B%2C%3B%3D%20")
     
-    let allowedQueryCharacterSample = "aAzZ~_-."
+    let allowedQueryCharacterSample = "aAzZ09~_-."
     
     func testStringEncoding() {
         
