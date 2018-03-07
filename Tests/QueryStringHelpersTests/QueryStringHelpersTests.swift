@@ -72,10 +72,19 @@ class QueryStringHelpersTests: XCTestCase {
         XCTAssertEqual(["b": "testagain", "a": "test",].queryString(),
                        "?a=test&b=testagain")
         
-        // Test two query parameters are ordered into alphabetical order
-        XCTAssertEqual(["b": "", "a": "",].queryString(spacesMode: .plus,
-                                                       emptyParameterMode: .noEquals),
+        // Test emptyParameterMode, with and without non-empty values
+        XCTAssertEqual(["a": ""].queryString(emptyParameterMode: .equals),
+                       "?a=")
+        XCTAssertEqual(["a": "", "b": ""].queryString(emptyParameterMode: .equals),
+                       "?a=&b=")
+        XCTAssertEqual(["a": "", "b": "test"].queryString(emptyParameterMode: .equals),
+                       "?a=&b=test")
+        XCTAssertEqual(["a": ""].queryString(emptyParameterMode: .noEquals),
+                       "?a")
+        XCTAssertEqual(["a": "", "b": ""].queryString(emptyParameterMode: .noEquals),
                        "?a&b")
+        XCTAssertEqual(["a": "", "b": "test"].queryString(emptyParameterMode: .noEquals),
+                       "?a&b=test")
         
         // Test URL Encoding of keys
         XCTAssertEqual(["\(restrictedQueryCharacters.unencoded)": "test"].queryString(spacesMode: .plus),
@@ -190,6 +199,29 @@ class QueryStringHelpersTests: XCTestCase {
             // Test parameter overwriting
             XCTAssertEqual("\(base)?a=test".adding(queryParameters: ["a": "overwrite"]),
                            "\(base)?a=overwrite")
+            
+            // Test emptyParameterMode, with and without non-empty values
+            XCTAssertEqual("\(base)?a".adding(queryParameters: ["b": ""], emptyParameterMode: .equals),
+                           "\(base)?a=&b=")
+            XCTAssertEqual("\(base)?a=".adding(queryParameters: ["b": ""], emptyParameterMode: .equals),
+                           "\(base)?a=&b=")
+            XCTAssertEqual("\(base)?a=test".adding(queryParameters: ["b": ""], emptyParameterMode: .equals),
+                           "\(base)?a=test&b=")
+            XCTAssertEqual("\(base)?a=test".adding(queryParameters: ["b": "", "c": ""], emptyParameterMode: .equals),
+                           "\(base)?a=test&b=&c=")
+            XCTAssertEqual("\(base)?a=test".adding(queryParameters: ["b": "", "c": "test"], emptyParameterMode: .equals),
+                           "\(base)?a=test&b=&c=test")
+            
+            XCTAssertEqual("\(base)?a".adding(queryParameters: ["b": ""], emptyParameterMode: .noEquals),
+                           "\(base)?a&b")
+            XCTAssertEqual("\(base)?a=".adding(queryParameters: ["b": ""], emptyParameterMode: .noEquals),
+                           "\(base)?a&b")
+            XCTAssertEqual("\(base)?a=test".adding(queryParameters: ["b": ""], emptyParameterMode: .noEquals),
+                           "\(base)?a=test&b")
+            XCTAssertEqual("\(base)?a=test".adding(queryParameters: ["b": "", "c": ""], emptyParameterMode: .noEquals),
+                           "\(base)?a=test&b&c")
+            XCTAssertEqual("\(base)?a=test".adding(queryParameters: ["b": "", "c": "test"], emptyParameterMode: .noEquals),
+                           "\(base)?a=test&b&c=test")
         }
         
         // Test Suite
