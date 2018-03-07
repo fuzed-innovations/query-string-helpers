@@ -8,7 +8,7 @@ import Foundation
 extension Dictionary where Key == String, Value == String {
     
     public func queryString(spacesMode: URLQuerySpaceEncodingMode = .plus,
-                            emptyParameterMode: QueryStringEmptyParameterMode = .equals) -> String {
+                            emptyParameterMode: URLQueryStringEmptyParameterMode = .equals) -> String {
         
         guard !self.isEmpty else { return "" }
         

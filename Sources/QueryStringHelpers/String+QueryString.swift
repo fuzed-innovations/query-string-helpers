@@ -37,7 +37,7 @@ extension String {
     
     public func adding(queryParameters: [String: String],
                        spacesMode: URLQuerySpaceEncodingMode = .plus,
-                       emptyParameterMode: QueryStringEmptyParameterMode = .equals) -> String {
+                       emptyParameterMode: URLQueryStringEmptyParameterMode = .equals) -> String {
         
         // Mutable copy
         var result = self
