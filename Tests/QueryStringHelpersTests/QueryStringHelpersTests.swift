@@ -72,6 +72,11 @@ class QueryStringHelpersTests: XCTestCase {
         XCTAssertEqual(["b": "testagain", "a": "test",].queryString(),
                        "?a=test&b=testagain")
         
+        // Test two query parameters are ordered into alphabetical order
+        XCTAssertEqual(["b": "", "a": "",].queryString(spacesMode: .plus,
+                                                       emptyParameterMode: .noEquals),
+                       "?a&b")
+        
         // Test URL Encoding of keys
         XCTAssertEqual(["\(restrictedQueryCharacters.unencoded)": "test"].queryString(spacesMode: .plus),
                        "?\(restrictedQueryCharacters.encodedSpacePlus)=test")
