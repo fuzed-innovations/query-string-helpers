@@ -35,10 +35,12 @@ extension String {
         return answer
     }
     
-    public func adding(queryParameters: [String: String], spacesMode: URLQuerySpaceEncodingMode = .plus) -> String {
+    public func adding(queryParameters: [String: String],
+                       spacesMode: URLQuerySpaceEncodingMode = .plus,
+                       emptyParameterMode: QueryStringEmptyParameterMode = .equals) -> String {
         
         // Mutable copy
-        var result = self;
+        var result = self
         
         // Merge current and new query parameter dictionaries
         var merged = self.queryParameters
@@ -52,9 +54,9 @@ extension String {
         }
         
         // Add new query string from merge
-        result += merged.queryString(spacesMode: spacesMode)
+        result += merged.queryString(spacesMode: spacesMode,
+                                     emptyParameterMode: emptyParameterMode)
         
         return result
     }
 }
-
